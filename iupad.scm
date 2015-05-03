@@ -3,33 +3,6 @@
 (require-library iup)
 (import (prefix iup iup:) (prefix iup-dialogs iupd:) iup-scintilla)
 
-(define (file-open)
-  (print "File > Open"))
-
-(define (file-save)
-  (print "File > Save"))
-
-(define (file-save-as)
-  (print "File > Save As"))
-
-(define (file-quit)
-  (print "File > Quit"))
-
-(define (undo)
-  (print "Edit > Undo"))
-
-(define (redo)
-  (print "Edit > Redo"))
-
-(define (copy)
-  (print "Edit > Copy"))
-
-(define (cut)
-  (print "Edit > Cut"))
-
-(define (paste)
-  (print "Edit > Paste"))
-
 
 (define menu/file/new (iup:menu-item "&New")) 
 
@@ -73,16 +46,55 @@
             (iup:menu-item "&Edit" menu/edit)))
 
 
-(define scint (scintilla expand: "YES" margintype1: "NUMBER" wordwrap: "WORD"))
+(define mainwin
+  (let ((scint (scintilla expand: "YES"
+                          margintype1: "NUMBER"
+                          wordwrap: "WORD"))
+        (text-changed #f)
+        (filename #f))
+    (lambda (msg)
+      (case msg
+        ((scint) scint)
+        ((changed?) text-changed)
+        ((changed!) (set! text-changed #t))))))
 
 (define dialog
   (iup:dialog
     (iup:vbox
       (iup:fill)
-      (iup:hbox scint)
+      (iup:hbox (mainwin 'scint))
       (iup:fill))
     title: "IUPad"
     menu: menu))
+
+
+(define (file-open)
+  (print "File > Open"))
+
+(define (file-save)
+  (print "File > Save"))
+
+(define (file-save-as)
+  (print "File > Save As"))
+
+(define (file-quit)
+  (print "File > Quit"))
+
+(define (undo)
+  (print "Edit > Undo"))
+
+(define (redo)
+  (print "Edit > Redo"))
+
+(define (copy)
+  (print "Edit > Copy"))
+
+(define (cut)
+  (print "Edit > Cut"))
+
+(define (paste)
+  (print "Edit > Paste"))
+
 
 (iup:show dialog)
 (iup:main-loop)
